@@ -3,7 +3,7 @@ name: 🛡️ LEGO Security Monitoring
 on:
   schedule:
     # Weekly security scan — Sundays at 22:00 UTC
-    - cron: '0 22 * * 0'
+    - cron: "0 22 * * 0"
   workflow_dispatch:
 
 permissions:
@@ -18,17 +18,17 @@ jobs:
 
     steps:
       - name: 📎 Get LEGO Security Instructions
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: 🔧 Initialize CodeQL — JavaScript/TypeScript
-        uses: github/codeql-action/init@e03543dad62555ecf6606aabe9724fd07e1cd632  # v3.32.6
+        uses: github/codeql-action/init@e03543dad62555ecf6606aabe9724fd07e1cd632 # v3.32.6
         with:
           languages: javascript-typescript
           build-mode: none
           queries: security-extended
 
       - name: 🔍 Perform Security Analysis
-        uses: github/codeql-action/analyze@e03543dad62555ecf6606aabe9724fd07e1cd632  # v3.32.6
+        uses: github/codeql-action/analyze@e03543dad62555ecf6606aabe9724fd07e1cd632 # v3.32.6
         with:
           category: "/language:javascript-typescript"
 

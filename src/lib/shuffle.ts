@@ -6,7 +6,11 @@ export interface ShuffleResult {
   teams: string[][];
 }
 
-export function shuffle(names: string[], teamCount: number, options?: ShuffleOptions): ShuffleResult {
+export function shuffle(
+  names: string[],
+  teamCount: number,
+  options?: ShuffleOptions
+): ShuffleResult {
   const clampedTeamCount = Math.max(2, teamCount);
   const locked = options?.lockedAssignments ?? {};
 
@@ -41,8 +45,7 @@ export function shuffle(names: string[], teamCount: number, options?: ShuffleOpt
   // Teams with index >= (clampedTeamCount - extras) get one extra member
   // This distributes extras to the last `extras` teams rather than the first,
   // avoiding front-loading.
-  const targetSize = (teamIdx: number) =>
-    baseSize + (teamIdx >= clampedTeamCount - extras ? 1 : 0);
+  const targetSize = (teamIdx: number) => baseSize + (teamIdx >= clampedTeamCount - extras ? 1 : 0);
 
   // Fill each team up to its target size with unlocked names
   let unlockedIdx = 0;

@@ -9,7 +9,10 @@ interface ValidationResult {
 }
 
 function validate(names: string, teamCount: number): ValidationResult {
-  const nameList = names.split("\n").map((n) => n.trim()).filter(Boolean);
+  const nameList = names
+    .split("\n")
+    .map((n) => n.trim())
+    .filter(Boolean);
 
   const seen = new Set<string>();
   const duplicates: string[] = [];
@@ -65,9 +68,7 @@ export function useShuffler() {
 
   function handleCopy() {
     if (!result) return;
-    const text = result
-      .map((team, i) => `Team ${i + 1}: ${team.join(", ")}`)
-      .join("\n");
+    const text = result.map((team, i) => `Team ${i + 1}: ${team.join(", ")}`).join("\n");
     navigator.clipboard.writeText(text);
     setCopyConfirmed(true);
     setTimeout(() => setCopyConfirmed(false), 2000);

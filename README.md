@@ -38,32 +38,37 @@ Paste a list of names, choose how many teams to create, and watch them animate i
 ### Local Development — Assembly Instructions
 
 1. **📦 Clone the repository**:
-    ```bash
-    git clone https://github.com/BondIT-ApS/team-shuffler.git
-    cd team-shuffler
-    ```
+
+   ```bash
+   git clone https://github.com/BondIT-ApS/team-shuffler.git
+   cd team-shuffler
+   ```
 
 2. **📦 Install dependencies**:
-    ```bash
-    npm install
-    ```
+
+   ```bash
+   npm install
+   ```
 
 3. **🚀 Start the dev server**:
-    ```bash
-    npm run dev
-    ```
-    Open [http://localhost:3000](http://localhost:3000) — just like that satisfying click when bricks snap together!
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) — just like that satisfying click when bricks snap together!
 
 4. **🧪 Run tests**:
-    ```bash
-    npm test          # run once
-    npm run test:watch  # watch mode
-    ```
+
+   ```bash
+   npm test          # run once
+   npm run test:watch  # watch mode
+   ```
 
 5. **🔍 Lint**:
-    ```bash
-    npm run lint
-    ```
+   ```bash
+   npm run lint
+   ```
 
 ### 🐳 Docker — Pre-Built Bricks
 
@@ -80,13 +85,13 @@ docker run -p 3000:3000 bonditgroup/team-shuffler-frontend:latest
 
 Production runs on Kubernetes via ArgoCD. The [`k8s/`](./k8s/) folder contains the Helm chart used by the prod ArgoCD application.
 
-| File | Purpose |
-|------|---------|
-| `k8s/Chart.yaml` | Helm chart metadata |
-| `k8s/values.yaml` | Base configuration |
-| `k8s/values-prod.yaml` | Production overrides — **bump `image.tag` here to deploy** |
-| `k8s/templates/` | Deployment, Service, Ingress, InfisicalSecret |
-| `k8s/secrets-template.yaml` | Environment variable reference |
+| File                        | Purpose                                                    |
+| --------------------------- | ---------------------------------------------------------- |
+| `k8s/Chart.yaml`            | Helm chart metadata                                        |
+| `k8s/values.yaml`           | Base configuration                                         |
+| `k8s/values-prod.yaml`      | Production overrides — **bump `image.tag` here to deploy** |
+| `k8s/templates/`            | Deployment, Service, Ingress, InfisicalSecret              |
+| `k8s/secrets-template.yaml` | Environment variable reference                             |
 
 ### Deploying to Production
 
@@ -103,11 +108,11 @@ git tag 26.3.2 && git push origin 26.3.2
 
 ## 🔐 CI/CD Pipeline — The Instruction Manual
 
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| `pr-quality-gate.yml` | Pull Requests | Lint, test, type-check, Docker build verification |
-| `build-and-push.yml` | Push to `main` / git tags | Build and publish to Docker Hub |
-| `security-monitoring.yml` | Weekly (Sunday) | CodeQL static analysis |
+| Workflow                  | Trigger                   | Purpose                                           |
+| ------------------------- | ------------------------- | ------------------------------------------------- |
+| `pr-quality-gate.yml`     | Pull Requests             | Lint, test, type-check, Docker build verification |
+| `build-and-push.yml`      | Push to `main` / git tags | Build and publish to Docker Hub                   |
+| `security-monitoring.yml` | Weekly (Sunday)           | CodeQL static analysis                            |
 
 ### Versioning — YYMM.PATCH
 

@@ -10,10 +10,7 @@ import { useShuffler } from "@/hooks/useShuffler";
 import { legoTheme } from "@/styles/themes/lego";
 import { AnimatePresence, motion } from "framer-motion";
 
-const TEAM_NAMES = [
-  "Alpha", "Bravo", "Charlie", "Delta",
-  "Echo", "Foxtrot", "Golf", "Hotel",
-];
+const TEAM_NAMES = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel"];
 
 export default function Home() {
   const {
@@ -51,11 +48,7 @@ export default function Home() {
       <Header />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 pb-8">
         <div className="flex flex-col gap-6">
-          <NameInput
-            value={names}
-            onChange={setNames}
-            placeholder={"Alice\nBob\nCharlie\n..."}
-          />
+          <NameInput value={names} onChange={setNames} placeholder={"Alice\nBob\nCharlie\n..."} />
           <TeamCountSelector
             value={teamCount}
             onChange={setTeamCount}
@@ -78,7 +71,9 @@ export default function Home() {
             </div>
           )}
           {validation.warning && !validation.error && (
-            <div style={{ color: legoTheme.colors.orange, fontWeight: "bold", fontSize: "0.85rem" }}>
+            <div
+              style={{ color: legoTheme.colors.orange, fontWeight: "bold", fontSize: "0.85rem" }}
+            >
               ⚠️ {validation.warning}
             </div>
           )}
@@ -108,8 +103,12 @@ export default function Home() {
                 exit={{ opacity: 0 }}
                 className="flex flex-col gap-4"
               >
-                <p className="text-sm font-black uppercase tracking-widest" style={{ color: legoTheme.colors.black }}>
-                  {result.reduce((sum, t) => sum + t.length, 0)} members &mdash; {result.length} teams
+                <p
+                  className="text-sm font-black uppercase tracking-widest"
+                  style={{ color: legoTheme.colors.black }}
+                >
+                  {result.reduce((sum, t) => sum + t.length, 0)} members &mdash; {result.length}{" "}
+                  teams
                 </p>
                 <div
                   className="grid gap-4"

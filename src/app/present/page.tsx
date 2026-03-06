@@ -32,7 +32,10 @@ export default function PresentPage() {
   useEffect(() => {
     try {
       const raw = localStorage.getItem("team-shuffler-presentation");
-      if (!raw) { setError(true); return; }
+      if (!raw) {
+        setError(true);
+        return;
+      }
       setData(JSON.parse(raw));
     } catch {
       setError(true);
@@ -54,7 +57,10 @@ export default function PresentPage() {
             backgroundColor: legoTheme.colors.white,
           }}
         >
-          <p className="text-xl font-black uppercase tracking-widest" style={{ color: legoTheme.colors.red }}>
+          <p
+            className="text-xl font-black uppercase tracking-widest"
+            style={{ color: legoTheme.colors.red }}
+          >
             No team data found
           </p>
           <p className="mt-2 text-sm font-bold" style={{ color: "#666" }}>
@@ -92,10 +98,7 @@ export default function PresentPage() {
         >
           🧱 Team Shuffler — Presentation
         </span>
-        <span
-          className="text-xs font-bold"
-          style={{ color: "#888" }}
-        >
+        <span className="text-xs font-bold" style={{ color: "#888" }}>
           {teams.reduce((s, t) => s + t.length, 0)} members · {teams.length} teams
         </span>
       </div>
@@ -111,9 +114,7 @@ export default function PresentPage() {
           const color = legoTheme.teamColors[i % legoTheme.teamColors.length];
           const isLight = isLightColor(color);
           const textColor = isLight ? legoTheme.colors.black : legoTheme.colors.white;
-          const label = useTeamNames
-            ? (teamNames[i] ?? `Team ${i + 1}`)
-            : `Team ${i + 1}`;
+          const label = useTeamNames ? (teamNames[i] ?? `Team ${i + 1}`) : `Team ${i + 1}`;
 
           return (
             <div

@@ -27,8 +27,6 @@ yarn-error.log*
 Thumbs.db
 
 # Editor
-.vscode/*
-!.vscode/tasks.json
 .idea/
 *.swp
 *.swo
@@ -95,6 +93,26 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+
+# Security and secrets
+*.pem
+*.key
+*.cert
+*.crt
+secrets/
+
+# AI Agent configuration (could contain project-specific credentials)
+WARP.md
+CLAUDE.md
+.claude/
+CURSOR.md
+.cursorignore
+.cursorindexingignore
+.playwright-mcp/
+
+# Alembic
+# Note: Keep migration files but ignore temp/cache
+alembic.ini.bak
 
 # Translations
 *.mo
@@ -226,25 +244,11 @@ cython_debug/
 # Learn more at https://abstra.io/docs
 .abstra/
 
-# Visual Studio Code
-#  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
-#  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#  and can be added to the global gitignore or merged into this file. However, if you prefer, 
-#  you could uncomment the following to ignore the entire vscode folder
-# .vscode/
-
 # Ruff stuff:
 .ruff_cache/
 
 # PyPI configuration file
 .pypirc
-
-# Cursor
-#  Cursor is an AI-powered code editor. `.cursorignore` specifies files/directories to
-#  exclude from AI features like autocomplete and code analysis. Recommended for sensitive data
-#  refer to https://docs.cursor.com/context/ignore-files
-.cursorignore
-.cursorindexingignore
 
 # Marimo
 marimo/_static/
