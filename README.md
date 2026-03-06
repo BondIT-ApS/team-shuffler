@@ -1,128 +1,159 @@
-# Team Shuffler
+# 🧱 Team Shuffler
 
-A lightweight team assignment tool for workshops, meetings, classrooms, and events.
+[![Quality Gate](https://img.shields.io/github/actions/workflow/status/BondIT-ApS/team-shuffler/pr-quality-gate.yml?branch=main&label=quality%20gate&style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler/actions/workflows/pr-quality-gate.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/BondIT-ApS/team-shuffler/build-and-push.yml?branch=main&label=build&style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler/actions/workflows/build-and-push.yml)
+[![License](https://img.shields.io/github/license/BondIT-ApS/team-shuffler?style=for-the-badge)](LICENSE)
+[![Repo Size](https://img.shields.io/github/repo-size/BondIT-ApS/team-shuffler?style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler)
+[![Made in Denmark](https://img.shields.io/badge/made%20in-Denmark%20🇩🇰-red?style=for-the-badge)](https://bondit.dk)
+[![Powered by Coffee](https://img.shields.io/badge/powered%20by-coffee%20☕-brown?style=for-the-badge)](https://bondit.dk)
 
-Paste a list of names, choose how many teams to create, and watch them animate into balanced groups — with a playful LEGO-inspired design that's polished enough for professional use.
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-team--shuffler--frontend-blue?logo=docker&style=for-the-badge)](https://hub.docker.com/r/bonditgroup/team-shuffler-frontend)
+[![Docker Pulls](https://img.shields.io/docker/pulls/bonditgroup/team-shuffler-frontend?style=for-the-badge)](https://hub.docker.com/r/bonditgroup/team-shuffler-frontend)
 
-## Product summary
+## 🔀 Building Better Teams, One Brick at a Time
 
-Team Shuffler solves a common friction point: quickly and fairly splitting a group of people into teams. It is designed to feel instant and satisfying to use, with an animated LEGO-block visual style that works equally well in a school classroom, a workshop, or a company kick-off.
+Welcome to Team Shuffler — where we do for team assignments what LEGO did for building: make it structured, repeatable, and surprisingly satisfying.
 
-The MVP is intentionally lean. Future versions will support saved sessions, shareable URLs, multiple visual themes, and a full persistence layer — making it suitable as a public product.
+Paste a list of names, choose how many teams to create, and watch them animate into perfectly balanced groups. Like snapping LEGO bricks together, every person clicks into the right place. Built with a LEGO-inspired design that's polished enough for the boardroom but fun enough for a workshop.
 
-## MVP scope
+## 🚀 Features — The Building Blocks
 
-- Paste or type names (one per line)
-- Choose the number of teams
-- Balanced assignment with fair remainder distribution
-- LEGO-inspired animated team blocks
-- Lock individual names before reshuffling
-- Reshuffle without losing locked positions
-- Copy results to clipboard
-- Reset / start over
-- Duplicate and empty-line detection
-- Accessibility: respects `prefers-reduced-motion`
+- **🔀 Fair Team Shuffling** — Fisher-Yates algorithm with balanced remainder distribution, like a master builder distributing bricks evenly
+- **🔒 Lock Assignments** — Lock specific people to their teams before reshuffling, for when some bricks must stay in place
+- **🎯 Presentation Mode** — Full-screen team display for projectors and screens, because every build deserves an audience
+- **🏷️ Named or Numbered Teams** — Toggle between Alpha/Bravo/Charlie… or Team 1/2/3 — your call, your build
+- **📋 Copy Results** — One-click clipboard export for sharing assignments via chat or email
+- **✅ Input Validation** — Catches duplicate names and impossible configurations before you hit shuffle
+- **⚡ Smooth Animations** — Framer Motion spring animations with full reduced-motion support
+- **🎨 LEGO Design System** — Chunky borders, bold fonts, and a team color palette straight from the brick catalogue
+- **🐳 Dockerized Deployment** — As easy to deploy as following a LEGO instruction manual
 
-## Future platform vision
+## 🧱 Getting Started — Foundation Pieces
 
-- **Multiple themes** — LEGO is the first theme; the system is built to be extended
-- **Shareable URLs** — generate a unique link for a prepared session
-- **Saved sessions** — persist title, attendee list, team count, theme, locked assignments, and results
-- **Public event view** — attendees open a link and see a prepared team setup
-- **Hosted product** — available on a subdomain of `bondit.dk` or a dedicated domain
-- **Admin / session management** — manage and revisit past sessions
+### Prerequisites — Tools You'll Need
 
-## Tech stack
+- [Node.js 20+](https://nodejs.org/) — Your primary building tool
+- [Docker](https://www.docker.com/get-started) — For containerized deployment
 
-| Layer | Choice |
-|---|---|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Animation | Framer Motion |
-| Drag & drop (future) | @dnd-kit |
-| State (future) | Zustand |
-| Database (future) | Prisma + PostgreSQL / Supabase |
-| Deployment | Kubernetes + ArgoCD |
-| Secrets | Infisical (`TEAMSHUFFLER_` prefix) |
+### Local Development — Assembly Instructions
 
-## Folder structure
+1. **📦 Clone the repository**:
+    ```bash
+    git clone https://github.com/BondIT-ApS/team-shuffler.git
+    cd team-shuffler
+    ```
+
+2. **📦 Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+3. **🚀 Start the dev server**:
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000) — just like that satisfying click when bricks snap together!
+
+4. **🧪 Run tests**:
+    ```bash
+    npm test          # run once
+    npm run test:watch  # watch mode
+    ```
+
+5. **🔍 Lint**:
+    ```bash
+    npm run lint
+    ```
+
+### 🐳 Docker — Pre-Built Bricks
+
+The production image is published to Docker Hub on every merge to `main`:
+
+```bash
+docker pull bonditgroup/team-shuffler-frontend:latest
+docker run -p 3000:3000 bonditgroup/team-shuffler-frontend:latest
+```
+
+**Docker Hub:** [bonditgroup/team-shuffler-frontend](https://hub.docker.com/r/bonditgroup/team-shuffler-frontend)
+
+## ☸️ Kubernetes Deployment — Advanced Building
+
+Production runs on Kubernetes via ArgoCD. The [`k8s/`](./k8s/) folder contains the Helm chart used by the prod ArgoCD application.
+
+| File | Purpose |
+|------|---------|
+| `k8s/Chart.yaml` | Helm chart metadata |
+| `k8s/values.yaml` | Base configuration |
+| `k8s/values-prod.yaml` | Production overrides — **bump `image.tag` here to deploy** |
+| `k8s/templates/` | Deployment, Service, Ingress, InfisicalSecret |
+| `k8s/secrets-template.yaml` | Environment variable reference |
+
+### Deploying to Production
+
+```bash
+# 1. Create a git tag (triggers Docker Hub build)
+git tag 26.3.2 && git push origin 26.3.2
+
+# 2. Once the image is on Docker Hub, bump the tag in k8s/values-prod.yaml
+# image:
+#   tag: "26.3.2"
+
+# 3. Push to main — ArgoCD syncs automatically
+```
+
+## 🔐 CI/CD Pipeline — The Instruction Manual
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `pr-quality-gate.yml` | Pull Requests | Lint, test, type-check, Docker build verification |
+| `build-and-push.yml` | Push to `main` / git tags | Build and publish to Docker Hub |
+| `security-monitoring.yml` | Weekly (Sunday) | CodeQL static analysis |
+
+### Versioning — YYMM.PATCH
+
+Tags follow `YY.MM.PATCH` format (e.g. `26.3.1`). Dev auto-deploys on every `main` push via ArgoCD Image Updater. Prod requires a manual tag bump in `k8s/values-prod.yaml`.
+
+## 🧰 Architecture — The Building Design
+
+Just like a well-designed LEGO set, Team Shuffler consists of a few precision-crafted pieces:
+
+1. **Next.js 15 (App Router)** — The baseplate everything builds on
+2. **TypeScript** — The instruction manual that keeps pieces the right shape
+3. **Tailwind CSS v4** — The colour palette and stud spacing guide
+4. **Framer Motion** — The satisfying click when pieces connect
+5. **Vitest** — The quality inspector who checks every brick
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx
-│   ├── page.tsx
-│   └── globals.css
-├── components/
-│   ├── ui/                 # Generic reusable components
-│   ├── shuffler/           # Domain-specific components
-│   │   ├── NameInput.tsx
-│   │   ├── TeamCountSelector.tsx
-│   │   ├── TeamContainer.tsx
-│   │   ├── NameBlock.tsx   # LEGO-style tile element
-│   │   └── ShuffleControls.tsx
-│   └── layout/
-│       ├── Header.tsx
-│       └── Footer.tsx
+├── app/
+│   ├── page.tsx          # Main shuffler UI
+│   └── present/          # Presentation mode (full-screen)
+├── components/shuffler/  # NameInput, TeamContainer, Controls…
+├── hooks/useShuffler.ts  # Core state machine
 ├── lib/
-│   ├── shuffle.ts          # Team balancing algorithm (pure, testable)
-│   └── utils.ts
-├── hooks/
-│   └── useShuffler.ts      # Core app state
-└── styles/
-    └── themes/
-        └── lego.ts         # Theme tokens (extensible)
+│   ├── shuffle.ts        # Fisher-Yates algorithm
+│   └── shuffle.test.ts   # Unit tests
+└── styles/themes/lego.ts # Design tokens
 ```
 
-## Local setup
+## 👷 Contributing — Join the Building Team
 
-### Prerequisites
+Contributions are welcome! Like any good LEGO enthusiast, we believe more builders create better creations.
 
-- Node.js 20+
-- npm, yarn, or pnpm
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request — the quality gate will check your bricks automatically
 
-### Install and run
+## 📄 License — The Building Rules
 
-```bash
-# Clone the repo
-git clone https://github.com/BondIT-ApS/team-shuffler.git
-cd team-shuffler
+This project is licensed under the MIT License. Like LEGO, you're free to rebuild and reimagine as you see fit!
 
-# Install dependencies
-npm install
+---
 
-# Start the development server
-npm run dev
-```
+## 🏢 About BondIT ApS
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+This project is maintained by [BondIT ApS](https://bondit.dk), a Danish IT consultancy that builds digital solutions one brick at a time. Just like our fellow Danish company LEGO, we believe in building things methodically, with precision and a touch of playfulness. Because the best solutions, like the best LEGO creations, are both functional AND fun!
 
-### Available scripts
-
-```bash
-npm run dev       # Start dev server
-npm run build     # Production build
-npm run start     # Start production server
-npm run lint      # Run ESLint
-npm run test      # Run tests
-```
-
-## Deployment
-
-This app is deployed on Kubernetes via ArgoCD. The production Helm chart and ArgoCD application manifests live in [consultant-portal-infra](https://github.com/BondIT-ApS/consultant-portal-infra).
-
-| Environment | URL | Strategy |
-|---|---|---|
-| Dev | `team-shuffler.dev.bondit.dk` | Auto-updated via ArgoCD Image Updater (latest semver) |
-| Prod | `team-shuffler.bondit.dk` | Pinned version, updated manually in `values-prod.yaml` |
-
-Secrets are managed via Infisical with a `TEAMSHUFFLER_` prefix. See `k8s/README.md` for reference manifests.
-
-## Contributing
-
-This project is maintained by [BondIT ApS](https://bondit.dk). Issues and pull requests are welcome.
-
-## License
-
-MIT
+**Made with ❤️, ☕, and 🧱 by BondIT ApS**
