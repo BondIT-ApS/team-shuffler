@@ -1,0 +1,35 @@
+# Production environment overrides
+# This file is the source of truth for prod deployments.
+# To deploy: bump image.tag here and push to main — ArgoCD will sync automatically.
+
+environment: "production"
+
+image:
+  tag: "26.3.1"   # ← bump this to deploy a new version
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+
+ingress:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: team-shuffler.bondit.dk
+  tls:
+    - secretName: team-shuffler-prod-tls
+      hosts:
+        - team-shuffler.bondit.dk
+
+infisical:
+  identityId: "c40b87cc-9653-4a6d-9f16-f55fbca8ae1b"  # Shared prod identity
+  envSlug: "prod"
+  resyncInterval: 60

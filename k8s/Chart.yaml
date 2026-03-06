@@ -1,0 +1,24 @@
+apiVersion: v2
+name: team-shuffler
+description: A Helm chart for Team Shuffler - LEGO-themed team splitting tool
+version: 0.1.0
+appVersion: "1.0.0"
+type: application
+
+keywords:
+  - bondit
+  - team-shuffler
+  - nextjs
+
+home: https://github.com/BondIT-ApS/team-shuffler
+sources:
+  - https://github.com/BondIT-ApS/team-shuffler
+
+maintainers:
+  - name: BondIT ApS
+    email: dev@bondit.dk
+    url: https://bondit.dk
+
+annotations:
+  category: Application
+  licenses: Private
