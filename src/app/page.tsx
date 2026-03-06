@@ -8,8 +8,17 @@ import ShuffleControls from "@/components/shuffler/ShuffleControls";
 import { useShuffler } from "@/hooks/useShuffler";
 
 export default function Home() {
-  const { names, setNames, teamCount, setTeamCount, handleShuffle } =
-    useShuffler();
+  const {
+    names,
+    setNames,
+    teamCount,
+    setTeamCount,
+    result,
+    handleShuffle,
+    handleCopy,
+    handleReset,
+    copyConfirmed,
+  } = useShuffler();
 
   const hasNames = names.trim().length > 0;
 
@@ -24,7 +33,14 @@ export default function Home() {
             placeholder={"Alice\nBob\nCharlie\n..."}
           />
           <TeamCountSelector value={teamCount} onChange={setTeamCount} />
-          <ShuffleControls onShuffle={handleShuffle} disabled={!hasNames} />
+          <ShuffleControls
+            onShuffle={handleShuffle}
+            onCopy={handleCopy}
+            onReset={handleReset}
+            hasResult={!!result}
+            disabled={!hasNames}
+            copyConfirmed={copyConfirmed}
+          />
           <div className="rounded-xl border border-dashed border-gray-300 bg-white p-6 text-center text-sm text-gray-400">
             Teams will appear here
           </div>
