@@ -29,9 +29,22 @@ export default function Home() {
     lockedNames,
     toggleLock,
     validation,
+    useTeamNames,
+    setUseTeamNames,
   } = useShuffler();
 
   const hasNames = names.trim().length > 0;
+
+  function handleShowTeams() {
+    if (!result) return;
+    const payload = {
+      teams: result,
+      teamNames: TEAM_NAMES,
+      useTeamNames,
+    };
+    localStorage.setItem("team-shuffler-presentation", JSON.stringify(payload));
+    window.open("/present", "_blank", "noopener");
+  }
 
   return (
     <div className="flex min-h-screen flex-col" style={{ backgroundColor: legoTheme.colors.gray }}>
@@ -43,11 +56,17 @@ export default function Home() {
             onChange={setNames}
             placeholder={"Alice\nBob\nCharlie\n..."}
           />
-          <TeamCountSelector value={teamCount} onChange={setTeamCount} />
+          <TeamCountSelector
+            value={teamCount}
+            onChange={setTeamCount}
+            useTeamNames={useTeamNames}
+            onToggleTeamNames={setUseTeamNames}
+          />
           <ShuffleControls
             onShuffle={handleShuffle}
             onCopy={handleCopy}
             onReset={handleReset}
+            onShowTeams={handleShowTeams}
             hasResult={!!result}
             disabled={!hasNames || !!validation.error}
             copyConfirmed={copyConfirmed}
@@ -100,11 +119,12 @@ export default function Home() {
                     <TeamContainer
                       key={i}
                       index={i}
-                      teamName={TEAM_NAMES[i] ?? `Team ${i + 1}`}
+                      teamName={useTeamNames ? (TEAM_NAMES[i] ?? `Team ${i + 1}`) : `Team ${i + 1}`}
                       members={members}
                       color={legoTheme.teamColors[i % legoTheme.teamColors.length]}
                       lockedNames={lockedNames}
                       onToggleLock={toggleLock}
+                      showName={useTeamNames}
                     />
                   ))}
                 </div>

@@ -36,6 +36,7 @@ export function useShuffler() {
   const [result, setResult] = useState<string[][] | null>(null);
   const [copyConfirmed, setCopyConfirmed] = useState(false);
   const [lockedNames, setLockedNames] = useState<Set<string>>(new Set());
+  const [useTeamNames, setUseTeamNames] = useState(true);
 
   const validation = validate(names, teamCount);
 
@@ -93,5 +94,7 @@ export function useShuffler() {
     lockedNames,
     toggleLock,
     validation,
+    useTeamNames,
+    setUseTeamNames,
   };
 }
