@@ -29,33 +29,16 @@ jobs:
           fetch-tags: true
 
       # ─────────────────────────────────────────────
-      # 🏷️  Calculate next version tag (YY.MM.PATCH)
+      # 🏷️  Calculate release tag (always YY.MM.0)
       # ─────────────────────────────────────────────
       - name: 🏷️ Calculate release tag
         id: release
         run: |
           YEAR=$(date +'%y')
           MONTH=$(date +'%-m')
-          PREFIX="${YEAR}.${MONTH}"
-
-          # Find the highest existing patch for this month
-          git fetch --tags
-          LATEST_PATCH=$(git tag -l "${PREFIX}.*" \
-            | grep -E "^${PREFIX}\.[0-9]+$" \
-            | sort -t. -k3 -n \
-            | tail -1 \
-            | awk -F. '{print $3}')
-
-          if [[ -z "$LATEST_PATCH" ]]; then
-            PATCH=1
-          else
-            PATCH=$((LATEST_PATCH + 1))
-          fi
-
-          TAG="${PREFIX}.${PATCH}"
-          echo "tag=${TAG}"           >> "$GITHUB_OUTPUT"
-          echo "prefix=${PREFIX}"     >> "$GITHUB_OUTPUT"
-          echo "📦 Next release tag: ${TAG}"
+          TAG="${YEAR}.${MONTH}.0"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "📦 Monthly release tag: ${TAG}"
 
       # ─────────────────────────────────────────────
       # 📋  Build LEGO-themed release notes from PRs
