@@ -29,7 +29,5 @@ ingress:
       hosts:
         - team-shuffler.bondit.dk
 
-infisical:
-  identityId: "c40b87cc-9653-4a6d-9f16-f55fbca8ae1b"  # Shared prod identity
-  envSlug: "prod"
-  resyncInterval: 60
+# Infisical identity config lives in the infra repo (consultant-portal-infra)
+# See bootstrap/prod/applications/team-shuffler.yaml → spec.source.helm.parameters
