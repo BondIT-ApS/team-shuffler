@@ -26,6 +26,8 @@ export default function Home() {
     handleCopy,
     handleReset,
     copyConfirmed,
+    lockedNames,
+    toggleLock,
   } = useShuffler();
 
   const hasNames = names.trim().length > 0;
@@ -89,6 +91,8 @@ export default function Home() {
                       teamName={TEAM_NAMES[i] ?? `Team ${i + 1}`}
                       members={members}
                       color={legoTheme.teamColors[i % legoTheme.teamColors.length]}
+                      lockedNames={lockedNames}
+                      onToggleLock={toggleLock}
                     />
                   ))}
                 </div>

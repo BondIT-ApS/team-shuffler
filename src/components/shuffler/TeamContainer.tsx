@@ -8,6 +8,8 @@ interface TeamContainerProps {
   members: string[];
   color: string;
   index: number;
+  lockedNames?: Set<string>;
+  onToggleLock?: (name: string) => void;
 }
 
 const containerVariants = {
@@ -15,7 +17,7 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.06 } },
 };
 
-export default function TeamContainer({ teamName, members, color, index }: TeamContainerProps) {
+export default function TeamContainer({ teamName, members, color, index, lockedNames, onToggleLock }: TeamContainerProps) {
   const isLight = isLightColor(color);
   const headerTextColor = isLight ? '#1A1A1A' : '#FFFFFF';
 
@@ -32,7 +34,6 @@ export default function TeamContainer({ teamName, members, color, index }: TeamC
       transition={{ type: 'spring', stiffness: 260, damping: 20, delay: index * 0.06 }}
       variants={containerVariants}
     >
-      {/* Team header */}
       <div
         className="px-4 py-2 flex items-center gap-2"
         style={{
@@ -47,27 +48,24 @@ export default function TeamContainer({ teamName, members, color, index }: TeamC
         <span className="text-base font-black truncate">{teamName}</span>
         <span
           className="ml-auto text-xs font-bold px-2 py-0.5 rounded"
-          style={{
-            backgroundColor: 'rgba(0,0,0,0.15)',
-            color: headerTextColor,
-          }}
+          style={{ backgroundColor: 'rgba(0,0,0,0.15)', color: headerTextColor }}
         >
           {members.length}
         </span>
       </div>
 
-      {/* Members grid */}
-      <div
-        className="p-3 grid gap-2"
-        style={{ backgroundColor: '#F5F5F5' }}
-      >
+      <div className="p-3 grid gap-2" style={{ backgroundColor: '#F5F5F5' }}>
         {members.length === 0 ? (
-          <p className="text-xs text-center py-2" style={{ color: '#999' }}>
-            No members
-          </p>
+          <p className="text-xs text-center py-2" style={{ color: '#999' }}>No members</p>
         ) : (
           members.map((name) => (
-            <NameBlock key={name} name={name} color={color} />
+            <NameBlock
+              key={name}
+              name={name}
+              color={color}
+              locked={lockedNames?.has(name)}
+              onToggleLock={onToggleLock ? () => onToggleLock(name) : undefined}
+            />
           ))
         )}
       </div>
