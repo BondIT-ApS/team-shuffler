@@ -1,3 +1,5 @@
+import { legoTheme } from "@/styles/themes/lego";
+
 interface TeamCountSelectorProps {
   value: number;
   onChange: (value: number) => void;
@@ -15,7 +17,8 @@ export default function TeamCountSelector({ value, onChange }: TeamCountSelector
     <div className="flex flex-col gap-2">
       <label
         htmlFor="team-count"
-        className="text-sm font-medium text-gray-700"
+        className="text-sm font-black uppercase tracking-widest"
+        style={{ color: legoTheme.colors.black }}
       >
         Number of teams
       </label>
@@ -25,7 +28,23 @@ export default function TeamCountSelector({ value, onChange }: TeamCountSelector
         min={2}
         value={value}
         onChange={handleChange}
-        className="w-24 rounded-lg border border-gray-300 p-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+        className="w-24 p-2 text-sm font-bold"
+        style={{
+          border: `${legoTheme.borderWidth} solid ${legoTheme.colors.border}`,
+          borderRadius: legoTheme.borderRadius,
+          boxShadow: legoTheme.shadow,
+          backgroundColor: legoTheme.colors.white,
+          outline: 'none',
+          fontFamily: legoTheme.fontFamily,
+        }}
+        onFocus={(e) => {
+          e.target.style.boxShadow = `4px 4px 0px ${legoTheme.colors.blue}`;
+          e.target.style.borderColor = legoTheme.colors.blue;
+        }}
+        onBlur={(e) => {
+          e.target.style.boxShadow = legoTheme.shadow;
+          e.target.style.borderColor = legoTheme.colors.border;
+        }}
       />
     </div>
   );
