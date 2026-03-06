@@ -6,13 +6,30 @@ export function useShuffler() {
   const [teamCount, setTeamCount] = useState(3);
   const [result, setResult] = useState<string[][] | null>(null);
   const [copyConfirmed, setCopyConfirmed] = useState(false);
+  const [lockedNames, setLockedNames] = useState<Set<string>>(new Set());
+
+  function toggleLock(name: string) {
+    setLockedNames((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) { next.delete(name); } else { next.add(name); }
+      return next;
+    });
+  }
 
   function handleShuffle() {
     const nameList = names
       .split("\n")
       .map((n) => n.trim())
       .filter(Boolean);
-    const { teams } = shuffle(nameList, teamCount);
+    const lockedAssignments: Record<string, number> = {};
+    if (result) {
+      result.forEach((team, idx) => {
+        team.forEach((name) => {
+          if (lockedNames.has(name)) lockedAssignments[name] = idx;
+        });
+      });
+    }
+    const { teams } = shuffle(nameList, teamCount, { lockedAssignments });
     setResult(teams);
   }
 
@@ -30,6 +47,7 @@ export function useShuffler() {
     setNames("");
     setTeamCount(3);
     setResult(null);
+    setLockedNames(new Set());
     setCopyConfirmed(false);
   }
 
@@ -43,5 +61,7 @@ export function useShuffler() {
     handleCopy,
     handleReset,
     copyConfirmed,
+    lockedNames,
+    toggleLock,
   };
 }
