@@ -10,6 +10,7 @@ interface TeamContainerProps {
   index: number;
   lockedNames?: Set<string>;
   onToggleLock?: (name: string) => void;
+  showName?: boolean; // if false, show only "Team N"
 }
 
 const containerVariants = {
@@ -17,15 +18,25 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.06 } },
 };
 
-export default function TeamContainer({ teamName, members, color, index, lockedNames, onToggleLock }: TeamContainerProps) {
+export default function TeamContainer({
+  teamName,
+  members,
+  color,
+  index,
+  lockedNames,
+  onToggleLock,
+  showName = true,
+}: TeamContainerProps) {
   const isLight = isLightColor(color);
   const headerTextColor = isLight ? '#1A1A1A' : '#FFFFFF';
   const reducedMotion = useReducedMotion();
 
+  const displayLabel = showName ? teamName : `Team ${index + 1}`;
+
   return (
     <motion.div
       role="region"
-      aria-label={`Team ${index + 1}: ${teamName}`}
+      aria-label={`Team ${index + 1}${showName ? `: ${teamName}` : ""}`}
       className="flex flex-col overflow-hidden"
       style={{
         border: '3px solid #1A1A1A',
@@ -45,10 +56,12 @@ export default function TeamContainer({ teamName, members, color, index, lockedN
           borderBottom: '3px solid #1A1A1A',
         }}
       >
-        <span className="text-xs font-black uppercase tracking-widest opacity-70">
-          Team {index + 1}
-        </span>
-        <span className="text-base font-black truncate">{teamName}</span>
+        {showName && (
+          <span className="text-xs font-black uppercase tracking-widest opacity-70">
+            Team {index + 1}
+          </span>
+        )}
+        <span className="text-base font-black truncate">{displayLabel}</span>
         <span
           className="ml-auto text-xs font-bold px-2 py-0.5 rounded"
           style={{ backgroundColor: 'rgba(0,0,0,0.15)', color: headerTextColor }}
