@@ -1,0 +1,99 @@
+name: Build and Push to Docker Hub
+
+# Builds and pushes the Docker image on merge to main and on releases.
+# Versioning: YY.MM.PATCH (e.g. 26.3.1) — create a git tag before releasing.
+# Dev: ArgoCD Image Updater picks up new tags automatically.
+# Prod: bump the tag in k8s/values-prod.yaml and push.
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Override version tag (e.g. 26.3.1)'
+        required: false
+        type: string
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0  # full history for tag-based versioning
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2  # v4.0.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Determine image tags
+        id: tags
+        run: |
+          IMAGE="bonditgroup/team-shuffler-frontend"
+
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            RELEASE_TAG="${{ github.event.release.tag_name }}"
+            {
+              echo "tags=${IMAGE}:${RELEASE_TAG},${IMAGE}:latest"
+              echo "primary_tag=${RELEASE_TAG}"
+            } >> "$GITHUB_OUTPUT"
+
+          elif [[ -n "${{ github.event.inputs.version_override }}" ]]; then
+            VERSION_TAG="${{ github.event.inputs.version_override }}"
+            {
+              echo "tags=${IMAGE}:${VERSION_TAG},${IMAGE}:latest"
+              echo "primary_tag=${VERSION_TAG}"
+            } >> "$GITHUB_OUTPUT"
+
+          else
+            # Push to main — find latest semantic version tag for current month
+            git fetch --tags
+            CURRENT_MONTH=$(date +"%y.%-m")
+            LATEST_TAG=$(git tag -l "${CURRENT_MONTH}.*" | sort -V | tail -1)
+
+            if [[ -n "$LATEST_TAG" ]]; then
+              {
+                echo "tags=${IMAGE}:${LATEST_TAG},${IMAGE}:latest"
+                echo "primary_tag=${LATEST_TAG}"
+              } >> "$GITHUB_OUTPUT"
+            else
+              {
+                echo "tags=${IMAGE}:latest"
+                echo "primary_tag=latest"
+              } >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          {
+            echo "## Build Summary 🧱"
+            echo "**Image:** bonditgroup/team-shuffler-frontend"
+            echo "**Tags:** ${{ steps.tags.outputs.tags }}"
+            echo "**Commit:** ${{ github.sha }}"
+            echo "**Triggered by:** ${{ github.event_name }}"
+          } >> "$GITHUB_STEP_SUMMARY"
