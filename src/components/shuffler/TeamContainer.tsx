@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import NameBlock from "./NameBlock";
 
 interface TeamContainerProps {
@@ -20,19 +20,22 @@ const containerVariants = {
 export default function TeamContainer({ teamName, members, color, index, lockedNames, onToggleLock }: TeamContainerProps) {
   const isLight = isLightColor(color);
   const headerTextColor = isLight ? '#1A1A1A' : '#FFFFFF';
+  const reducedMotion = useReducedMotion();
 
   return (
     <motion.div
+      role="region"
+      aria-label={`Team ${index + 1}: ${teamName}`}
       className="flex flex-col overflow-hidden"
       style={{
         border: '3px solid #1A1A1A',
         borderRadius: '4px',
         boxShadow: '4px 4px 0px #1A1A1A',
       }}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: index * 0.06 }}
-      variants={containerVariants}
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.95 }}
+      animate={reducedMotion ? {} : { opacity: 1, scale: 1 }}
+      transition={reducedMotion ? undefined : { type: 'spring', stiffness: 260, damping: 20, delay: index * 0.06 }}
+      variants={reducedMotion ? undefined : containerVariants}
     >
       <div
         className="px-4 py-2 flex items-center gap-2"
