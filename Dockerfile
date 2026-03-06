@@ -20,6 +20,12 @@ RUN npm ci --ignore-scripts
 
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Bake the version tag into the Next.js build so it's available at runtime
+# via process.env.NEXT_PUBLIC_APP_VERSION (set by the CI build step)
+ARG APP_VERSION=dev
+ENV NEXT_PUBLIC_APP_VERSION=$APP_VERSION
+
 RUN npm run build
 
 # ── Stage 3: Runtime ─────────────────────────────────────────────────────────

@@ -85,6 +85,8 @@ jobs:
           push: true
           tags: ${{ steps.tags.outputs.tags }}
           platforms: linux/amd64
+          build-args: |
+            APP_VERSION=${{ steps.tags.outputs.primary_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
