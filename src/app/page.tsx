@@ -28,6 +28,7 @@ export default function Home() {
     copyConfirmed,
     lockedNames,
     toggleLock,
+    validation,
   } = useShuffler();
 
   const hasNames = names.trim().length > 0;
@@ -48,9 +49,20 @@ export default function Home() {
             onCopy={handleCopy}
             onReset={handleReset}
             hasResult={!!result}
-            disabled={!hasNames}
+            disabled={!hasNames || !!validation.error}
             copyConfirmed={copyConfirmed}
           />
+
+          {validation.error && (
+            <div style={{ color: legoTheme.colors.red, fontWeight: "bold", fontSize: "0.85rem" }}>
+              ⚠️ {validation.error}
+            </div>
+          )}
+          {validation.warning && !validation.error && (
+            <div style={{ color: legoTheme.colors.orange, fontWeight: "bold", fontSize: "0.85rem" }}>
+              ⚠️ {validation.warning}
+            </div>
+          )}
 
           <AnimatePresence mode="wait">
             {result === null ? (

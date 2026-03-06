@@ -1,6 +1,35 @@
 import { useState } from "react";
 import { shuffle } from "@/lib/shuffle";
 
+interface ValidationResult {
+  nameList: string[];
+  duplicates: string[];
+  error: string | null;
+  warning: string | null;
+}
+
+function validate(names: string, teamCount: number): ValidationResult {
+  const nameList = names.split("\n").map((n) => n.trim()).filter(Boolean);
+
+  const seen = new Set<string>();
+  const duplicates: string[] = [];
+  for (const n of nameList) {
+    if (seen.has(n)) duplicates.push(n);
+    else seen.add(n);
+  }
+
+  let error: string | null = null;
+  if (nameList.length === 1) error = "Add at least 2 names to create teams";
+  else if (nameList.length > 1 && teamCount > nameList.length)
+    error = `Not enough names for ${teamCount} teams — add more names or reduce team count`;
+
+  let warning: string | null = null;
+  if (duplicates.length > 0)
+    warning = `Duplicate names detected: ${[...new Set(duplicates)].join(", ")}`;
+
+  return { nameList, duplicates, error, warning };
+}
+
 export function useShuffler() {
   const [names, setNames] = useState("");
   const [teamCount, setTeamCount] = useState(3);
@@ -8,19 +37,19 @@ export function useShuffler() {
   const [copyConfirmed, setCopyConfirmed] = useState(false);
   const [lockedNames, setLockedNames] = useState<Set<string>>(new Set());
 
+  const validation = validate(names, teamCount);
+
   function toggleLock(name: string) {
     setLockedNames((prev) => {
       const next = new Set(prev);
-      if (next.has(name)) { next.delete(name); } else { next.add(name); }
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
       return next;
     });
   }
 
   function handleShuffle() {
-    const nameList = names
-      .split("\n")
-      .map((n) => n.trim())
-      .filter(Boolean);
+    if (validation.error) return;
     const lockedAssignments: Record<string, number> = {};
     if (result) {
       result.forEach((team, idx) => {
@@ -29,7 +58,7 @@ export function useShuffler() {
         });
       });
     }
-    const { teams } = shuffle(nameList, teamCount, { lockedAssignments });
+    const { teams } = shuffle(validation.nameList, teamCount, { lockedAssignments });
     setResult(teams);
   }
 
@@ -63,5 +92,6 @@ export function useShuffler() {
     copyConfirmed,
     lockedNames,
     toggleLock,
+    validation,
   };
 }
