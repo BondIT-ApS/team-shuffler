@@ -1,0 +1,211 @@
+name: 📦 LEGO Monthly Release
+
+on:
+  schedule:
+    # 01:00 UTC on the 1st of every month (02:00 CET / 03:00 CEST)
+    - cron: '0 1 1 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — print release notes without creating tag or release'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  monthly-release:
+    name: 📦 Create Monthly LEGO Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📎 Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # ─────────────────────────────────────────────
+      # 🏷️  Calculate next version tag (YY.MM.PATCH)
+      # ─────────────────────────────────────────────
+      - name: 🏷️ Calculate release tag
+        id: release
+        run: |
+          YEAR=$(date +'%y')
+          MONTH=$(date +'%-m')
+          PREFIX="${YEAR}.${MONTH}"
+
+          # Find the highest existing patch for this month
+          git fetch --tags
+          LATEST_PATCH=$(git tag -l "${PREFIX}.*" \
+            | grep -E "^${PREFIX}\.[0-9]+$" \
+            | sort -t. -k3 -n \
+            | tail -1 \
+            | awk -F. '{print $3}')
+
+          if [[ -z "$LATEST_PATCH" ]]; then
+            PATCH=1
+          else
+            PATCH=$((LATEST_PATCH + 1))
+          fi
+
+          TAG="${PREFIX}.${PATCH}"
+          echo "tag=${TAG}"           >> "$GITHUB_OUTPUT"
+          echo "prefix=${PREFIX}"     >> "$GITHUB_OUTPUT"
+          echo "📦 Next release tag: ${TAG}"
+
+      # ─────────────────────────────────────────────
+      # 📋  Build LEGO-themed release notes from PRs
+      # ─────────────────────────────────────────────
+      - name: 📋 Build release notes
+        id: notes
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # v7
+        with:
+          script: |
+            // Find date of last release tag to bound the PR query
+            let sinceDate = null;
+            try {
+              const releases = await github.rest.repos.listReleases({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 1,
+              });
+              if (releases.data.length > 0) {
+                sinceDate = releases.data[0].published_at;
+                console.log(`Last release: ${releases.data[0].tag_name} on ${sinceDate}`);
+              }
+            } catch (e) {
+              console.log('No previous releases found — using last 31 days');
+            }
+
+            if (!sinceDate) {
+              const d = new Date();
+              d.setDate(d.getDate() - 31);
+              sinceDate = d.toISOString();
+            }
+
+            // Fetch merged PRs since last release
+            const prs = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              base: 'main',
+              per_page: 100,
+            });
+
+            const merged = prs.filter(pr =>
+              pr.merged_at && new Date(pr.merged_at) > new Date(sinceDate)
+            );
+
+            console.log(`Found ${merged.length} PRs merged since ${sinceDate}`);
+
+            // Group by label priority
+            const groups = {
+              feature:        { emoji: '🧱', title: 'New Features',     prs: [] },
+              bug:            { emoji: '🔧', title: 'Bug Fixes',         prs: [] },
+              infrastructure: { emoji: '🏗️',  title: 'Infrastructure',   prs: [] },
+              security:       { emoji: '🛡️',  title: 'Security',         prs: [] },
+              other:          { emoji: '📋', title: 'Other Changes',     prs: [] },
+            };
+
+            const labelMap = {
+              'enhancement': 'feature',
+              'feature':     'feature',
+              'mvp':         'feature',
+              'bug':         'bug',
+              'bugfix':      'bug',
+              'fix':         'bug',
+              'infrastructure': 'infrastructure',
+              'ci':          'infrastructure',
+              'security':    'security',
+            };
+
+            for (const pr of merged) {
+              const labels = pr.labels.map(l => l.name.toLowerCase());
+              let group = 'other';
+              for (const [label, target] of Object.entries(labelMap)) {
+                if (labels.includes(label)) { group = target; break; }
+              }
+              groups[group].prs.push(pr);
+            }
+
+            // Build markdown
+            const tag   = '${{ steps.release.outputs.tag }}';
+            const month = new Date().toLocaleString('en-GB', { month: 'long', year: 'numeric', timeZone: 'Europe/Copenhagen' });
+
+            let body = `## 🧱 Team Shuffler — ${month}\n\n`;
+            body += `> *Another month, another set of LEGO bricks snapping into place!*\n\n`;
+
+            let hasContent = false;
+            for (const [, group] of Object.entries(groups)) {
+              if (group.prs.length === 0) continue;
+              hasContent = true;
+              body += `### ${group.emoji} ${group.title}\n\n`;
+              for (const pr of group.prs) {
+                const labels = pr.labels.map(l => `\`${l.name}\``).join(' ');
+                body += `- **${pr.title}** ([#${pr.number}](${pr.html_url})) — @${pr.user.login}`;
+                if (labels) body += ` ${labels}`;
+                body += '\n';
+              }
+              body += '\n';
+            }
+
+            if (!hasContent) {
+              body += `*No pull requests merged since the last release.*\n\n`;
+            }
+
+            body += `---\n`;
+            body += `**Full changelog:** https://github.com/${context.repo.owner}/${context.repo.repo}/compare/...${tag}\n\n`;
+            body += `**Docker image:** \`bonditgroup/team-shuffler-frontend:${tag}\`\n\n`;
+            body += `*Built with ❤️, ☕, and 🧱 by BondIT ApS*`;
+
+            console.log('--- Release notes preview ---');
+            console.log(body);
+            console.log('-----------------------------');
+
+            core.setOutput('body', body);
+            core.setOutput('pr_count', String(merged.length));
+
+      # ─────────────────────────────────────────────
+      # 🚀  Create tag + GitHub Release
+      # ─────────────────────────────────────────────
+      - name: 🚀 Create tag and GitHub Release
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag }}
+          NOTES: ${{ steps.notes.outputs.body }}
+        run: |
+          # Abort if tag already exists
+          if git tag | grep -qx "${TAG}"; then
+            echo "⚠️  Tag ${TAG} already exists — skipping release"
+            exit 0
+          fi
+
+          # Create and push annotated tag
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "${TAG}" -m "📦 Monthly release ${TAG}"
+          git push origin "${TAG}"
+
+          # Write notes to temp file (avoids shell quoting issues with multiline)
+          echo "${NOTES}" > /tmp/release-notes.md
+
+          # Create GitHub release
+          gh release create "${TAG}" \
+            --title "🧱 Release ${TAG}" \
+            --notes-file /tmp/release-notes.md \
+            --latest
+
+          echo "✅ Created release: ${TAG} (${{ steps.notes.outputs.pr_count }} PRs)"
+
+      - name: 📋 Dry run — print release notes only
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🔍 DRY RUN — no tag or release will be created"
+          echo "Tag would be: ${{ steps.release.outputs.tag }}"
+          echo ""
+          echo "${{ steps.notes.outputs.body }}"
