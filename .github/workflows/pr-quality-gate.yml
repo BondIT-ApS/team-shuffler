@@ -1,0 +1,204 @@
+name: 🧱 LEGO Quality Gate — PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  # ─────────────────────────────────────────────
+  # 🔍 Analyse the PR and post a LEGO build plan
+  # ─────────────────────────────────────────────
+  discover-changes:
+    name: 🔍 Discover LEGO Building Plan
+    runs-on: ubuntu-latest
+    outputs:
+      lines-changed: ${{ steps.stats.outputs.lines-changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Calculate change statistics
+        id: stats
+        run: |
+          STATS=$(git diff --stat "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}")
+          LINES=$(echo "$STATS" | tail -1 | grep -oE '[0-9]+ insertion|[0-9]+ deletion' | grep -oE '[0-9]+' | awk '{s+=$1} END {print s+0}')
+          echo "lines-changed=$LINES" >> "$GITHUB_OUTPUT"
+          echo "Detected $LINES lines changed"
+
+      - name: 🧱 Post LEGO Building Plan comment
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # v7
+        with:
+          script: |
+            const lines = ${{ steps.stats.outputs.lines-changed }};
+            let complexity, emoji;
+            if      (lines <  50)  { complexity = "Small LEGO kit";           emoji = "🧱"; }
+            else if (lines < 200)  { complexity = "Medium LEGO set";          emoji = "🏢"; }
+            else if (lines < 500)  { complexity = "Large LEGO construction";  emoji = "🏰"; }
+            else                   { complexity = "Master Builder project";    emoji = "🌟"; }
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ${emoji} LEGO Quality Gate — Build Plan
+
+            **Building Complexity:** ${complexity} (${lines} lines changed)
+
+            ### 🚀 Quality Checks Starting…
+            The automated quality gates are now running to make sure all LEGO pieces fit together perfectly!
+
+            | Check | What it verifies |
+            |-------|-----------------|
+            | 🎨 **Lint** | ESLint — code style and best practices |
+            | ✅ **Test** | Vitest unit tests |
+            | 🔷 **Types** | TypeScript strict type checking |
+            | 🔒 **Audit** | npm dependency vulnerability scan |
+            | 🐳 **Docker** | Dockerfile builds successfully |
+
+            *Like any good LEGO instruction manual, we verify each step before moving to the next! 📋*`
+            });
+
+  # ─────────────────────────────────────────────
+  # 🎨 Lint
+  # ─────────────────────────────────────────────
+  lint:
+    name: 🎨 Lint (ESLint)
+    runs-on: ubuntu-latest
+    needs: discover-changes
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+
+  # ─────────────────────────────────────────────
+  # ✅ Unit tests
+  # ─────────────────────────────────────────────
+  test:
+    name: ✅ Tests (Vitest)
+    runs-on: ubuntu-latest
+    needs: discover-changes
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+
+  # ─────────────────────────────────────────────
+  # 🔷 TypeScript type check
+  # ─────────────────────────────────────────────
+  typecheck:
+    name: 🔷 Types (tsc --noEmit)
+    runs-on: ubuntu-latest
+    needs: discover-changes
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npx tsc --noEmit
+
+  # ─────────────────────────────────────────────
+  # 🔒 Dependency security audit
+  # ─────────────────────────────────────────────
+  audit:
+    name: 🔒 Audit (npm audit)
+    runs-on: ubuntu-latest
+    needs: discover-changes
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm audit --audit-level=high
+
+  # ─────────────────────────────────────────────
+  # 🐳 Docker build verification (no push)
+  # ─────────────────────────────────────────────
+  docker-build:
+    name: 🐳 LEGO Assembly Test (Docker Build)
+    runs-on: ubuntu-latest
+    needs: [lint, test, typecheck, audit]
+    if: always() && !contains(needs.*.result, 'failure')
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: team-shuffler:pr-${{ github.event.number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ─────────────────────────────────────────────
+  # 📊 Final quality gate summary
+  # ─────────────────────────────────────────────
+  quality-gate-summary:
+    name: 📊 LEGO Quality Gate Summary
+    runs-on: ubuntu-latest
+    needs: [discover-changes, lint, test, typecheck, audit, docker-build]
+    if: always()
+    steps:
+      - name: 🎯 Post Quality Gate Results
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # v7
+        with:
+          script: |
+            const needs = ${{ toJson(needs) }};
+            const lines = needs['discover-changes'].outputs['lines-changed'];
+
+            const jobLabels = {
+              'lint':         '🎨 Lint (ESLint)',
+              'test':         '✅ Tests (Vitest)',
+              'typecheck':    '🔷 Types (TypeScript)',
+              'audit':        '🔒 Audit (npm audit)',
+              'docker-build': '🐳 Docker Assembly Test',
+            };
+
+            let allPassed = true;
+            const rows = Object.entries(jobLabels).map(([key, label]) => {
+              const result = needs[key]?.result ?? 'skipped';
+              if (result === 'failure') allPassed = false;
+              const icon = result === 'success' ? '✅' : result === 'failure' ? '❌' : '⏭️';
+              return `| ${icon} | ${label} | ${result} |`;
+            });
+
+            const header = allPassed
+              ? '## 🏗️ LEGO Quality Gate — Ready to Build!\n\n🎊 **All checks passed!** Your LEGO pieces fit together perfectly. The PR is ready for review.'
+              : '## ⚠️ LEGO Quality Gate — Needs Attention\n\n🔧 **Some checks failed.** A few LEGO pieces need adjustment before they can fit together. See the details below.';
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${header}
+
+            ### 📋 Build Results (${lines} lines changed)
+
+            | | Check | Result |
+            |---|---|---|
+            ${rows.join('\n')}
+
+            ---
+            *Built with ❤️ using the LEGO methodology — every piece matters!* 🧱`
+            });
