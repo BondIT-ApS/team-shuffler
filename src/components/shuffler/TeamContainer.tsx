@@ -28,7 +28,7 @@ export default function TeamContainer({
   showName = true,
 }: TeamContainerProps) {
   const isLight = isLightColor(color);
-  const headerTextColor = isLight ? '#1A1A1A' : '#FFFFFF';
+  const headerTextColor = isLight ? "#1A1A1A" : "#FFFFFF";
   const reducedMotion = useReducedMotion();
 
   const displayLabel = showName ? teamName : `Team ${index + 1}`;
@@ -39,13 +39,17 @@ export default function TeamContainer({
       aria-label={`Team ${index + 1}${showName ? `: ${teamName}` : ""}`}
       className="flex flex-col overflow-hidden"
       style={{
-        border: '3px solid #1A1A1A',
-        borderRadius: '4px',
-        boxShadow: '4px 4px 0px #1A1A1A',
+        border: "3px solid #1A1A1A",
+        borderRadius: "4px",
+        boxShadow: "4px 4px 0px #1A1A1A",
       }}
       initial={reducedMotion ? false : { opacity: 0, scale: 0.95 }}
       animate={reducedMotion ? {} : { opacity: 1, scale: 1 }}
-      transition={reducedMotion ? undefined : { type: 'spring', stiffness: 260, damping: 20, delay: index * 0.06 }}
+      transition={
+        reducedMotion
+          ? undefined
+          : { type: "spring", stiffness: 260, damping: 20, delay: index * 0.06 }
+      }
       variants={reducedMotion ? undefined : containerVariants}
     >
       <div
@@ -53,7 +57,7 @@ export default function TeamContainer({
         style={{
           backgroundColor: color,
           color: headerTextColor,
-          borderBottom: '3px solid #1A1A1A',
+          borderBottom: "3px solid #1A1A1A",
         }}
       >
         {showName && (
@@ -64,15 +68,17 @@ export default function TeamContainer({
         <span className="text-base font-black truncate">{displayLabel}</span>
         <span
           className="ml-auto text-xs font-bold px-2 py-0.5 rounded"
-          style={{ backgroundColor: 'rgba(0,0,0,0.15)', color: headerTextColor }}
+          style={{ backgroundColor: "rgba(0,0,0,0.15)", color: headerTextColor }}
         >
           {members.length}
         </span>
       </div>
 
-      <div className="p-3 grid gap-2" style={{ backgroundColor: '#F5F5F5' }}>
+      <div className="p-3 grid gap-2" style={{ backgroundColor: "#F5F5F5" }}>
         {members.length === 0 ? (
-          <p className="text-xs text-center py-2" style={{ color: '#999' }}>No members</p>
+          <p className="text-xs text-center py-2" style={{ color: "#999" }}>
+            No members
+          </p>
         ) : (
           members.map((name) => (
             <NameBlock

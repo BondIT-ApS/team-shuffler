@@ -47,16 +47,16 @@ export default function ShuffleControls({
           boxShadow: disabled ? "2px 2px 0px #999" : legoTheme.shadow,
         }}
         onMouseEnter={(e) => {
-          if (!disabled) (e.currentTarget.style.backgroundColor = "#C0241A");
+          if (!disabled) e.currentTarget.style.backgroundColor = "#C0241A";
         }}
         onMouseLeave={(e) => {
-          if (!disabled) (e.currentTarget.style.backgroundColor = legoTheme.colors.red);
+          if (!disabled) e.currentTarget.style.backgroundColor = legoTheme.colors.red;
         }}
         onMouseDown={(e) => {
-          if (!disabled) (e.currentTarget.style.transform = "translate(2px, 2px)");
+          if (!disabled) e.currentTarget.style.transform = "translate(2px, 2px)";
         }}
         onMouseUp={(e) => {
-          if (!disabled) (e.currentTarget.style.transform = "");
+          if (!disabled) e.currentTarget.style.transform = "";
         }}
       >
         {hasResult ? "Reshuffle" : "Create Teams"}

@@ -3,11 +3,11 @@ name: 📦 LEGO Monthly Release
 on:
   schedule:
     # 01:00 UTC on the 1st of every month (02:00 CET / 03:00 CEST)
-    - cron: '0 1 1 * *'
+    - cron: "0 1 1 * *"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run — print release notes without creating tag or release'
+        description: "Dry run — print release notes without creating tag or release"
         required: false
         type: boolean
         default: false
@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: 📎 Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -45,7 +45,7 @@ jobs:
       # ─────────────────────────────────────────────
       - name: 📋 Build release notes
         id: notes
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b  # v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             // Find date of last release tag to bound the PR query

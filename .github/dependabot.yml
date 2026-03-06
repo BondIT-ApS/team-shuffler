@@ -5,11 +5,11 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: '21:12'
+      time: "21:12"
       timezone: Europe/Copenhagen
     labels: [dependencies, npm]
     commit-message:
-      prefix: '🧱'
+      prefix: "🧱"
       include: scope
 
   - package-ecosystem: docker
@@ -17,11 +17,11 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: '21:12'
+      time: "21:12"
       timezone: Europe/Copenhagen
     labels: [dependencies, docker]
     commit-message:
-      prefix: '🧱'
+      prefix: "🧱"
       include: scope
 
   - package-ecosystem: github-actions
@@ -29,9 +29,9 @@ updates:
     schedule:
       interval: weekly
       day: monday
-      time: '21:12'
+      time: "21:12"
       timezone: Europe/Copenhagen
     labels: [dependencies, github-actions]
     commit-message:
-      prefix: '🧱'
+      prefix: "🧱"
       include: scope

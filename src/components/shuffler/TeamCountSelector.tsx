@@ -85,7 +85,14 @@ export default function TeamCountSelector({
               aria-hidden="true"
             >
               {useTeamNames && (
-                <span style={{ fontSize: 14, fontWeight: 900, color: legoTheme.colors.black, lineHeight: 1 }}>
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 900,
+                    color: legoTheme.colors.black,
+                    lineHeight: 1,
+                  }}
+                >
                   ✓
                 </span>
               )}

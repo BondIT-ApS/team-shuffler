@@ -272,10 +272,7 @@
     },
     {
       "label": "Fix All Formatting",
-      "dependsOn": [
-        "Lint: Fix ESLint Issues",
-        "Lint: Format (Prettier)"
-      ],
+      "dependsOn": ["Lint: Fix ESLint Issues", "Lint: Format (Prettier)"],
       "dependsOrder": "parallel",
       "problemMatcher": []
     },
