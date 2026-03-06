@@ -7,6 +7,8 @@ interface NameInputProps {
 }
 
 export default function NameInput({ value, onChange, placeholder }: NameInputProps) {
+  const nameCount = value.split("\n").map((n) => n.trim()).filter(Boolean).length;
+
   return (
     <div className="flex flex-col gap-2">
       <label
@@ -20,7 +22,7 @@ export default function NameInput({ value, onChange, placeholder }: NameInputPro
         id="name-input"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder ?? "Alice\nBob\nCharlie\n..."}
+        placeholder={placeholder ?? "Alice\nBob\nCharlie\n...\n(max 60 chars per name)"}
         rows={10}
         className="w-full p-3 text-sm leading-relaxed resize-y font-semibold"
         style={{
@@ -40,6 +42,9 @@ export default function NameInput({ value, onChange, placeholder }: NameInputPro
           e.target.style.borderColor = legoTheme.colors.border;
         }}
       />
+      <p className="text-xs font-bold" style={{ color: '#999' }}>
+        {nameCount} {nameCount === 1 ? 'name' : 'names'}
+      </p>
     </div>
   );
 }

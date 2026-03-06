@@ -9,7 +9,7 @@ export default function TeamCountSelector({ value, onChange }: TeamCountSelector
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const parsed = parseInt(e.target.value, 10);
     if (!isNaN(parsed)) {
-      onChange(Math.max(2, parsed));
+      onChange(Math.min(20, Math.max(2, parsed)));
     }
   }
 
@@ -26,6 +26,7 @@ export default function TeamCountSelector({ value, onChange }: TeamCountSelector
         id="team-count"
         type="number"
         min={2}
+        max={20}
         value={value}
         onChange={handleChange}
         className="w-24 p-2 text-sm font-bold"
