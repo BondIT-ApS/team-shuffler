@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
@@ -29,9 +29,5 @@
     "tailwindcss": "^4.0.12",
     "typescript": "^5",
     "vitest": "^3.0.8"
-  },
-  "overrides": {
-    "minimatch": ">=10.2.3",
-    "tar": ">=7.5.8"
   }
 }
