@@ -1,6 +1,6 @@
 # 🧱 Team Shuffler
 
-[![Quality Gate](https://img.shields.io/github/actions/workflow/status/BondIT-ApS/team-shuffler/pr-quality-gate.yml?branch=main&label=quality%20gate&style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler/actions/workflows/pr-quality-gate.yml)
+[![Quality Gate](https://img.shields.io/github/actions/workflow/status/BondIT-ApS/team-shuffler/quality-gate.yml?branch=main&label=quality%20gate&style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler/actions/workflows/quality-gate.yml)
 [![Build](https://img.shields.io/github/actions/workflow/status/BondIT-ApS/team-shuffler/build-and-push.yml?branch=main&label=build&style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler/actions/workflows/build-and-push.yml)
 [![License](https://img.shields.io/github/license/BondIT-ApS/team-shuffler?style=for-the-badge)](LICENSE)
 [![Repo Size](https://img.shields.io/github/repo-size/BondIT-ApS/team-shuffler?style=for-the-badge)](https://github.com/BondIT-ApS/team-shuffler)
