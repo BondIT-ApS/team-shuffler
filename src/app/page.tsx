@@ -8,6 +8,7 @@ import ShuffleControls from "@/components/shuffler/ShuffleControls";
 import TeamContainer from "@/components/shuffler/TeamContainer";
 import { useShuffler } from "@/hooks/useShuffler";
 import { legoTheme } from "@/styles/themes/lego";
+import { AnimatePresence, motion } from "framer-motion";
 
 const TEAM_NAMES = [
   "Alpha", "Bravo", "Charlie", "Delta",
@@ -49,39 +50,51 @@ export default function Home() {
             copyConfirmed={copyConfirmed}
           />
 
-          {result === null ? (
-            <div
-              className="p-6 text-center text-sm font-bold"
-              style={{
-                border: `3px dashed ${legoTheme.colors.black}`,
-                borderRadius: legoTheme.borderRadius,
-                color: "#999",
-                backgroundColor: legoTheme.colors.white,
-              }}
-            >
-              Teams will appear here
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              <p className="text-sm font-black uppercase tracking-widest" style={{ color: legoTheme.colors.black }}>
-                {result.reduce((sum, t) => sum + t.length, 0)} members &mdash; {result.length} teams
-              </p>
-              <div
-                className="grid gap-4"
-                style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
+          <AnimatePresence mode="wait">
+            {result === null ? (
+              <motion.div
+                key="placeholder"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="p-6 text-center text-sm font-bold"
+                style={{
+                  border: `3px dashed ${legoTheme.colors.black}`,
+                  borderRadius: legoTheme.borderRadius,
+                  color: "#999",
+                  backgroundColor: legoTheme.colors.white,
+                }}
               >
-                {result.map((members, i) => (
-                  <TeamContainer
-                    key={i}
-                    index={i}
-                    teamName={TEAM_NAMES[i] ?? `Team ${i + 1}`}
-                    members={members}
-                    color={legoTheme.teamColors[i % legoTheme.teamColors.length]}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+                Teams will appear here
+              </motion.div>
+            ) : (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col gap-4"
+              >
+                <p className="text-sm font-black uppercase tracking-widest" style={{ color: legoTheme.colors.black }}>
+                  {result.reduce((sum, t) => sum + t.length, 0)} members &mdash; {result.length} teams
+                </p>
+                <div
+                  className="grid gap-4"
+                  style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
+                >
+                  {result.map((members, i) => (
+                    <TeamContainer
+                      key={i}
+                      index={i}
+                      teamName={TEAM_NAMES[i] ?? `Team ${i + 1}`}
+                      members={members}
+                      color={legoTheme.teamColors[i % legoTheme.teamColors.length]}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </main>
       <Footer />

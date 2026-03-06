@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import NameBlock from "./NameBlock";
 
 interface TeamContainerProps {
@@ -7,18 +10,27 @@ interface TeamContainerProps {
   index: number;
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
 export default function TeamContainer({ teamName, members, color, index }: TeamContainerProps) {
   const isLight = isLightColor(color);
   const headerTextColor = isLight ? '#1A1A1A' : '#FFFFFF';
 
   return (
-    <div
+    <motion.div
       className="flex flex-col overflow-hidden"
       style={{
         border: '3px solid #1A1A1A',
         borderRadius: '4px',
         boxShadow: '4px 4px 0px #1A1A1A',
       }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: index * 0.06 }}
+      variants={containerVariants}
     >
       {/* Team header */}
       <div
@@ -59,7 +71,7 @@ export default function TeamContainer({ teamName, members, color, index }: TeamC
           ))
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
