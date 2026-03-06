@@ -43,7 +43,8 @@ The MVP is intentionally lean. Future versions will support saved sessions, shar
 | Drag & drop (future) | @dnd-kit |
 | State (future) | Zustand |
 | Database (future) | Prisma + PostgreSQL / Supabase |
-| Deployment | Vercel |
+| Deployment | Kubernetes + ArgoCD |
+| Secrets | Infisical (`TEAMSHUFFLER_` prefix) |
 
 ## Folder structure
 
@@ -106,6 +107,17 @@ npm run start     # Start production server
 npm run lint      # Run ESLint
 npm run test      # Run tests
 ```
+
+## Deployment
+
+This app is deployed on Kubernetes via ArgoCD. The production Helm chart and ArgoCD application manifests live in [consultant-portal-infra](https://github.com/BondIT-ApS/consultant-portal-infra).
+
+| Environment | URL | Strategy |
+|---|---|---|
+| Dev | `team-shuffler.dev.bondit.dk` | Auto-updated via ArgoCD Image Updater (latest semver) |
+| Prod | `team-shuffler.bondit.dk` | Pinned version, updated manually in `values-prod.yaml` |
+
+Secrets are managed via Infisical with a `TEAMSHUFFLER_` prefix. See `k8s/README.md` for reference manifests.
 
 ## Contributing
 
