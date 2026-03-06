@@ -1,0 +1,32 @@
+{
+  "recommendations": [
+    // Team Shuffler — Next.js 15 + TypeScript + Tailwind v4
+
+    // TypeScript / React
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "dsznajder.es7-react-js-snippets",
+
+    // Next.js
+    "ms-vscode.vscode-typescript-next",
+
+    // Testing (Vitest)
+    "vitest.explorer",
+
+    // Docker
+    "ms-azuretools.vscode-docker",
+
+    // Git & Version Control
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // General Utilities
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "yzhang.markdown-all-in-one",
+    "christian-kohler.path-intellisense",
+    "formulahendry.auto-rename-tag"
+  ]
+}
