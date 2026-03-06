@@ -75,7 +75,7 @@ export default function ShuffleControls({
             onMouseDown={(e) => (e.currentTarget.style.transform = "translate(2px, 2px)")}
             onMouseUp={(e) => (e.currentTarget.style.transform = "")}
           >
-            {copyConfirmed ? "Copied! ✓" : "Copy Results"}
+            <span aria-live="polite">{copyConfirmed ? "Copied! ✓" : "Copy Results"}</span>
           </button>
 
           <button

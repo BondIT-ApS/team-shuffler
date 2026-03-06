@@ -24,6 +24,7 @@ export default function TeamCountSelector({ value, onChange }: TeamCountSelector
       </label>
       <input
         id="team-count"
+        aria-label="Number of teams"
         type="number"
         min={2}
         value={value}

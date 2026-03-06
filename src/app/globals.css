@@ -4,3 +4,8 @@
 * {
   font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif;
 }
+
+:focus-visible {
+  outline: 3px solid #006DB7;
+  outline-offset: 2px;
+}

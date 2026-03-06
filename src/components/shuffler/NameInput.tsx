@@ -10,14 +10,15 @@ export default function NameInput({ value, onChange, placeholder }: NameInputPro
   return (
     <div className="flex flex-col gap-2">
       <label
-        htmlFor="name-input"
+        htmlFor="names-input"
         className="text-sm font-black uppercase tracking-widest"
         style={{ color: legoTheme.colors.black }}
       >
         Participants
       </label>
       <textarea
-        id="name-input"
+        id="names-input"
+        aria-label="Names list"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder ?? "Alice\nBob\nCharlie\n..."}
