@@ -1,3 +1,5 @@
+import { legoTheme } from "@/styles/themes/lego";
+
 interface ShuffleControlsProps {
   onShuffle: () => void;
   onCopy: () => void;
@@ -6,6 +8,22 @@ interface ShuffleControlsProps {
   disabled?: boolean;
   copyConfirmed?: boolean;
 }
+
+const legoButton = {
+  base: {
+    border: `${legoTheme.borderWidth} solid ${legoTheme.colors.border}`,
+    borderRadius: legoTheme.borderRadius,
+    fontFamily: legoTheme.fontFamily,
+    fontWeight: 900,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase" as const,
+    width: "100%",
+    padding: "12px 24px",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    transition: "all 0.1s",
+  },
+};
 
 export default function ShuffleControls({
   onShuffle,
@@ -17,33 +35,62 @@ export default function ShuffleControls({
 }: ShuffleControlsProps) {
   return (
     <div className="flex flex-col gap-2">
-      {!hasResult && (
-        <button
-          onClick={onShuffle}
-          disabled={disabled}
-          className="w-full rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Create Teams
-        </button>
-      )}
+      <button
+        onClick={onShuffle}
+        disabled={disabled}
+        style={{
+          ...legoButton.base,
+          backgroundColor: disabled ? "#ccc" : legoTheme.colors.red,
+          color: disabled ? "#888" : legoTheme.colors.white,
+          boxShadow: disabled ? "2px 2px 0px #999" : legoTheme.shadow,
+        }}
+        onMouseEnter={(e) => {
+          if (!disabled) (e.currentTarget.style.backgroundColor = "#C0241A");
+        }}
+        onMouseLeave={(e) => {
+          if (!disabled) (e.currentTarget.style.backgroundColor = legoTheme.colors.red);
+        }}
+        onMouseDown={(e) => {
+          if (!disabled) (e.currentTarget.style.transform = "translate(2px, 2px)");
+        }}
+        onMouseUp={(e) => {
+          if (!disabled) (e.currentTarget.style.transform = "");
+        }}
+      >
+        {hasResult ? "Reshuffle" : "Create Teams"}
+      </button>
+
       {hasResult && (
         <>
           <button
-            onClick={onShuffle}
-            disabled={disabled}
-            className="w-full rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-md transition hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Reshuffle
-          </button>
-          <button
             onClick={onCopy}
-            className="w-full rounded-xl border border-blue-300 bg-white px-6 py-3 text-base font-medium text-blue-700 shadow-sm transition hover:bg-blue-50 active:scale-95"
+            style={{
+              ...legoButton.base,
+              backgroundColor: legoTheme.colors.blue,
+              color: legoTheme.colors.white,
+              boxShadow: legoTheme.shadow,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#005a9a")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = legoTheme.colors.blue)}
+            onMouseDown={(e) => (e.currentTarget.style.transform = "translate(2px, 2px)")}
+            onMouseUp={(e) => (e.currentTarget.style.transform = "")}
           >
             {copyConfirmed ? "Copied! ✓" : "Copy Results"}
           </button>
+
           <button
             onClick={onReset}
-            className="w-full rounded-xl px-6 py-3 text-base font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 active:scale-95"
+            style={{
+              ...legoButton.base,
+              backgroundColor: legoTheme.colors.white,
+              color: legoTheme.colors.black,
+              boxShadow: "2px 2px 0px #ccc",
+              border: `2px solid #ccc`,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = legoTheme.colors.white)}
+            onMouseDown={(e) => (e.currentTarget.style.transform = "translate(2px, 2px)")}
+            onMouseUp={(e) => (e.currentTarget.style.transform = "")}
           >
             Reset
           </button>
