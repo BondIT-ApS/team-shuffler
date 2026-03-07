@@ -1,5 +1,5 @@
 # ── Stage 1: Install dependencies ───────────────────────────────────────────
-FROM node:24-alpine AS deps
+FROM node:25-alpine AS deps
 WORKDIR /app
 
 # Install only production-critical native build tools, then clean up
@@ -11,7 +11,7 @@ RUN npm ci --omit=dev --ignore-scripts && \
     npm cache clean --force
 
 # ── Stage 2: Build ──────────────────────────────────────────────────────────
-FROM node:24-alpine AS builder
+FROM node:25-alpine AS builder
 WORKDIR /app
 
 # Need full deps (including devDeps) for the build
@@ -29,7 +29,7 @@ ENV NEXT_PUBLIC_APP_VERSION=$APP_VERSION
 RUN npm run build
 
 # ── Stage 3: Runtime ─────────────────────────────────────────────────────────
-FROM node:24-alpine AS runner
+FROM node:25-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
