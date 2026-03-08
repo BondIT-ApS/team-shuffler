@@ -24,7 +24,7 @@ services:
   #   restart: unless-stopped
   #
   # db:
-  #   image: postgres:15
+  #   image: postgres:18
   #   env_file: .env.local
   #   ports:
   #     - "5432:5432"
