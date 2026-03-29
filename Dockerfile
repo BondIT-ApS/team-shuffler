@@ -26,6 +26,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ARG APP_VERSION=dev
 ENV NEXT_PUBLIC_APP_VERSION=$APP_VERSION
 
+# Bake GA4 Measurement ID at build time (NEXT_PUBLIC_ vars are inlined by Next.js)
+ARG NEXT_PUBLIC_GA_ID
+ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
+
 RUN npm run build
 
 # ── Stage 3: Runtime ─────────────────────────────────────────────────────────
