@@ -34,16 +34,30 @@ export default function PresentPage() {
 
   useEffect(() => {
     try {
+      // Try URL param first (for QR code / shared links)
+      const params = new URLSearchParams(window.location.search);
+      const encoded = params.get("data");
+      if (encoded) {
+        const parsed = JSON.parse(decodeURIComponent(atob(encoded)));
+        setData(parsed);
+        setPageUrl(window.location.href);
+        return;
+      }
+      // Fall back to localStorage (local "Show Teams" flow without data param)
       const raw = localStorage.getItem("team-shuffler-presentation");
       if (!raw) {
         setError(true);
         return;
       }
-      setData(JSON.parse(raw));
+      const parsed = JSON.parse(raw);
+      // Re-encode into URL so the QR code on this page also works for sharing
+      const reEncoded = btoa(encodeURIComponent(JSON.stringify(parsed)));
+      const shareUrl = `${window.location.origin}/present?data=${reEncoded}`;
+      setData(parsed);
+      setPageUrl(shareUrl);
     } catch {
       setError(true);
     }
-    setPageUrl(window.location.href);
   }, []);
 
   if (error) {

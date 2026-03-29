@@ -79,8 +79,11 @@ export default function Home() {
       teamNames: TEAM_NAMES,
       useTeamNames,
     };
+    // Store in localStorage for local use
     localStorage.setItem("team-shuffler-presentation", JSON.stringify(payload));
-    window.open("/present", "_blank", "noopener");
+    // Also encode into URL so QR code recipients can view without localStorage
+    const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
+    window.open(`/present?data=${encoded}`, "_blank", "noopener");
     trackEvent("present_teams");
   }
 
