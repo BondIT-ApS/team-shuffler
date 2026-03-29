@@ -5,6 +5,7 @@ import { CookieConsentBanner } from "@/components/ui/CookieConsentBanner";
 
 const APP_URL = "https://team-shuffler.bondit.dk";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+const RYBBIT_SITE_ID = "aea6e2b931db";
 
 export const metadata: Metadata = {
   title: "Team Shuffler",
@@ -43,6 +44,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <CookieConsentBanner />
+        <Script
+          src="https://stats1.bonde.ninja/api/script.js"
+          data-site-id={RYBBIT_SITE_ID}
+          strategy="afterInteractive"
+        />
         {GA_ID && (
           <>
             <Script
