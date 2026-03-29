@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import NameInput from "@/components/shuffler/NameInput";
@@ -10,6 +11,7 @@ import { useShuffler } from "@/hooks/useShuffler";
 import { legoTheme } from "@/styles/themes/lego";
 import { trackEvent } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
+import { toPng } from "html-to-image";
 
 const TEAM_NAMES = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel"];
 
@@ -31,6 +33,7 @@ export default function Home() {
     setUseTeamNames,
   } = useShuffler();
 
+  const teamGridRef = useRef<HTMLDivElement>(null);
   const hasNames = names.trim().length > 0;
 
   function handleShowTeams() {
@@ -43,6 +46,37 @@ export default function Home() {
     localStorage.setItem("team-shuffler-presentation", JSON.stringify(payload));
     window.open("/present", "_blank", "noopener");
     trackEvent("present_teams");
+  }
+
+  async function handleExport() {
+    if (!teamGridRef.current) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const filename = `teams-${today}.png`;
+
+    try {
+      const dataUrl = await toPng(teamGridRef.current, {
+        backgroundColor: legoTheme.colors.gray,
+        pixelRatio: 2,
+      });
+
+      if (typeof navigator !== "undefined" && navigator.share) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], filename, { type: "image/png" });
+        try {
+          await navigator.share({ files: [file], title: "Team Shuffler Results" });
+          return;
+        } catch {
+          // Fall through to standard download if share is cancelled or unsupported
+        }
+      }
+
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = filename;
+      link.click();
+    } catch (err) {
+      console.error("Export failed:", err);
+    }
   }
 
   return (
@@ -62,6 +96,7 @@ export default function Home() {
             onCopy={handleCopy}
             onReset={handleReset}
             onShowTeams={handleShowTeams}
+            onExport={handleExport}
             hasResult={!!result}
             disabled={!hasNames || !!validation.error}
             copyConfirmed={copyConfirmed}
@@ -113,6 +148,7 @@ export default function Home() {
                   teams
                 </p>
                 <div
+                  ref={teamGridRef}
                   className="grid gap-4"
                   style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
                 >

@@ -5,6 +5,7 @@ interface ShuffleControlsProps {
   onCopy: () => void;
   onReset: () => void;
   onShowTeams: () => void;
+  onExport: () => void;
   hasResult: boolean;
   disabled?: boolean;
   copyConfirmed?: boolean;
@@ -30,6 +31,7 @@ export default function ShuffleControls({
   onCopy,
   onReset,
   onShowTeams,
+  onExport,
   hasResult,
   disabled = false,
   copyConfirmed = false,
@@ -101,6 +103,27 @@ export default function ShuffleControls({
               Show Teams
             </button>
           </div>
+
+          {/* Download as image */}
+          <button
+            onClick={onExport}
+            aria-label="Download teams as PNG image"
+            style={{
+              ...legoButton.base,
+              width: "100%",
+              backgroundColor: legoTheme.colors.orange,
+              color: legoTheme.colors.white,
+              boxShadow: legoTheme.shadow,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c96310")}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = legoTheme.colors.orange)
+            }
+            onMouseDown={(e) => (e.currentTarget.style.transform = "translate(2px, 2px)")}
+            onMouseUp={(e) => (e.currentTarget.style.transform = "")}
+          >
+            Download as Image
+          </button>
 
           <button
             onClick={onReset}
