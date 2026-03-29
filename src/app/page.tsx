@@ -8,6 +8,7 @@ import ShuffleControls from "@/components/shuffler/ShuffleControls";
 import TeamContainer from "@/components/shuffler/TeamContainer";
 import { useShuffler } from "@/hooks/useShuffler";
 import { legoTheme } from "@/styles/themes/lego";
+import { trackEvent } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 
 const TEAM_NAMES = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel"];
@@ -41,6 +42,7 @@ export default function Home() {
     };
     localStorage.setItem("team-shuffler-presentation", JSON.stringify(payload));
     window.open("/present", "_blank", "noopener");
+    trackEvent("present_teams");
   }
 
   return (
