@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import { legoTheme } from "@/styles/themes/lego";
 
 interface PresentationData {
@@ -28,6 +29,8 @@ function isLightColor(hex: string): boolean {
 export default function PresentPage() {
   const [data, setData] = useState<PresentationData | null>(null);
   const [error, setError] = useState(false);
+  const [showQr, setShowQr] = useState(true);
+  const [pageUrl, setPageUrl] = useState("");
 
   useEffect(() => {
     try {
@@ -40,6 +43,7 @@ export default function PresentPage() {
     } catch {
       setError(true);
     }
+    setPageUrl(window.location.href);
   }, []);
 
   if (error) {
@@ -296,6 +300,69 @@ export default function PresentPage() {
           );
         })}
       </div>
+
+      {/* ── QR code overlay ───────────────────────────────────────────── */}
+      {/* Toggle button */}
+      <button
+        onClick={() => setShowQr((v) => !v)}
+        aria-label={showQr ? "Hide QR code" : "Show QR code"}
+        style={{
+          position: "fixed",
+          bottom: showQr ? "196px" : "16px",
+          right: "16px",
+          zIndex: 50,
+          backgroundColor: legoTheme.colors.yellow,
+          color: legoTheme.colors.black,
+          border: `2px solid ${legoTheme.colors.black}`,
+          borderRadius: legoTheme.borderRadius,
+          fontFamily: legoTheme.fontFamily,
+          fontWeight: 900,
+          fontSize: "11px",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          padding: "4px 10px",
+          cursor: "pointer",
+          boxShadow: "2px 2px 0px #fff",
+          transition: "bottom 0.2s ease",
+        }}
+      >
+        QR
+      </button>
+
+      {/* QR panel */}
+      {showQr && pageUrl && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "16px",
+            right: "16px",
+            zIndex: 40,
+            backgroundColor: legoTheme.colors.white,
+            border: `3px solid ${legoTheme.colors.black}`,
+            borderRadius: legoTheme.borderRadius,
+            boxShadow: legoTheme.shadow,
+            padding: "10px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          <QRCodeSVG value={pageUrl} size={140} bgColor="#ffffff" fgColor="#1A1A1A" />
+          <span
+            style={{
+              fontFamily: legoTheme.fontFamily,
+              fontWeight: 900,
+              fontSize: "9px",
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: legoTheme.colors.black,
+            }}
+          >
+            Scan to open
+          </span>
+        </div>
+      )}
     </div>
   );
 }
