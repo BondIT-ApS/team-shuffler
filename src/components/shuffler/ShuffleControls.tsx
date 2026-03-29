@@ -6,7 +6,11 @@ interface ShuffleControlsProps {
   onReset: () => void;
   onShowTeams: () => void;
   onExport: () => void;
+  onHistoryBack?: () => void;
+  onHistoryForward?: () => void;
   hasResult: boolean;
+  canGoBack?: boolean;
+  canGoForward?: boolean;
   disabled?: boolean;
   copyConfirmed?: boolean;
 }
@@ -32,7 +36,11 @@ export default function ShuffleControls({
   onReset,
   onShowTeams,
   onExport,
+  onHistoryBack,
+  onHistoryForward,
   hasResult,
+  canGoBack = false,
+  canGoForward = false,
   disabled = false,
   copyConfirmed = false,
 }: ShuffleControlsProps) {
@@ -66,6 +74,65 @@ export default function ShuffleControls({
 
       {hasResult && (
         <>
+          {/* History navigation */}
+          <div className="flex gap-2">
+            <button
+              onClick={onHistoryBack}
+              disabled={!canGoBack}
+              aria-label="Previous shuffle"
+              style={{
+                ...legoButton.base,
+                flex: 1,
+                backgroundColor: canGoBack ? legoTheme.colors.orange : "#ccc",
+                color: canGoBack ? legoTheme.colors.white : "#888",
+                boxShadow: canGoBack ? legoTheme.shadow : "2px 2px 0px #999",
+                cursor: canGoBack ? "pointer" : "not-allowed",
+              }}
+              onMouseEnter={(e) => {
+                if (canGoBack) e.currentTarget.style.backgroundColor = "#D4681A";
+              }}
+              onMouseLeave={(e) => {
+                if (canGoBack) e.currentTarget.style.backgroundColor = legoTheme.colors.orange;
+              }}
+              onMouseDown={(e) => {
+                if (canGoBack) e.currentTarget.style.transform = "translate(2px, 2px)";
+              }}
+              onMouseUp={(e) => {
+                if (canGoBack) e.currentTarget.style.transform = "";
+              }}
+            >
+              ← Prev
+            </button>
+            <button
+              onClick={onHistoryForward}
+              disabled={!canGoForward}
+              aria-label="Next shuffle"
+              style={{
+                ...legoButton.base,
+                flex: 1,
+                backgroundColor: canGoForward ? legoTheme.colors.orange : "#ccc",
+                color: canGoForward ? legoTheme.colors.white : "#888",
+                boxShadow: canGoForward ? legoTheme.shadow : "2px 2px 0px #999",
+                cursor: canGoForward ? "pointer" : "not-allowed",
+              }}
+              onMouseEnter={(e) => {
+                if (canGoForward) e.currentTarget.style.backgroundColor = "#D4681A";
+              }}
+              onMouseLeave={(e) => {
+                if (canGoForward)
+                  e.currentTarget.style.backgroundColor = legoTheme.colors.orange;
+              }}
+              onMouseDown={(e) => {
+                if (canGoForward) e.currentTarget.style.transform = "translate(2px, 2px)";
+              }}
+              onMouseUp={(e) => {
+                if (canGoForward) e.currentTarget.style.transform = "";
+              }}
+            >
+              Next →
+            </button>
+          </div>
+
           {/* Copy + Show Teams side by side */}
           <div className="flex gap-2">
             <button
@@ -96,7 +163,9 @@ export default function ShuffleControls({
                 boxShadow: legoTheme.shadow,
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#008040")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = legoTheme.colors.green)}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = legoTheme.colors.green)
+              }
               onMouseDown={(e) => (e.currentTarget.style.transform = "translate(2px, 2px)")}
               onMouseUp={(e) => (e.currentTarget.style.transform = "")}
             >
@@ -136,7 +205,9 @@ export default function ShuffleControls({
               border: `2px solid #ccc`,
             }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = legoTheme.colors.white)}
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = legoTheme.colors.white)
+            }
             onMouseDown={(e) => (e.currentTarget.style.transform = "translate(2px, 2px)")}
             onMouseUp={(e) => (e.currentTarget.style.transform = "")}
           >

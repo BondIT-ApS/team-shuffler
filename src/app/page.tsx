@@ -12,6 +12,14 @@ import { legoTheme } from "@/styles/themes/lego";
 import { trackEvent } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import { toPng } from "html-to-image";
+import {
+  DndContext,
+  DragEndEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
 const TEAM_NAMES = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel"];
 
@@ -31,10 +39,38 @@ export default function Home() {
     validation,
     useTeamNames,
     setUseTeamNames,
+    canGoBack,
+    canGoForward,
+    historyBack,
+    historyForward,
+    moveParticipant,
   } = useShuffler();
 
   const teamGridRef = useRef<HTMLDivElement>(null);
   const hasNames = names.trim().length > 0;
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 5 } })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || !result) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const [fromTeamStr, fromIndexStr] = activeId.split(":");
+    const fromTeam = parseInt(fromTeamStr, 10);
+    const fromIndex = parseInt(fromIndexStr, 10);
+
+    if (!overId.startsWith("team-")) return;
+    const toTeam = parseInt(overId.replace("team-", ""), 10);
+
+    if (fromTeam === toTeam) return;
+    moveParticipant(fromTeam, fromIndex, toTeam);
+  }
 
   function handleShowTeams() {
     if (!result) return;
@@ -97,7 +133,11 @@ export default function Home() {
             onReset={handleReset}
             onShowTeams={handleShowTeams}
             onExport={handleExport}
+            onHistoryBack={historyBack}
+            onHistoryForward={historyForward}
             hasResult={!!result}
+            canGoBack={canGoBack}
+            canGoForward={canGoForward}
             disabled={!hasNames || !!validation.error}
             copyConfirmed={copyConfirmed}
           />
@@ -147,24 +187,29 @@ export default function Home() {
                   {result.reduce((sum, t) => sum + t.length, 0)} members &mdash; {result.length}{" "}
                   teams
                 </p>
-                <div
-                  ref={teamGridRef}
-                  className="grid gap-4"
-                  style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
-                >
-                  {result.map((members, i) => (
-                    <TeamContainer
-                      key={i}
-                      index={i}
-                      teamName={useTeamNames ? (TEAM_NAMES[i] ?? `Team ${i + 1}`) : `Team ${i + 1}`}
-                      members={members}
-                      color={legoTheme.teamColors[i % legoTheme.teamColors.length]}
-                      lockedNames={lockedNames}
-                      onToggleLock={toggleLock}
-                      showName={useTeamNames}
-                    />
-                  ))}
-                </div>
+                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                  <div
+                    ref={teamGridRef}
+                    className="grid gap-4"
+                    style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
+                  >
+                    {result.map((members, i) => (
+                      <TeamContainer
+                        key={i}
+                        index={i}
+                        teamName={
+                          useTeamNames ? (TEAM_NAMES[i] ?? `Team ${i + 1}`) : `Team ${i + 1}`
+                        }
+                        members={members}
+                        color={legoTheme.teamColors[i % legoTheme.teamColors.length]}
+                        lockedNames={lockedNames}
+                        onToggleLock={toggleLock}
+                        showName={useTeamNames}
+                        draggable
+                      />
+                    ))}
+                  </div>
+                </DndContext>
               </motion.div>
             )}
           </AnimatePresence>
