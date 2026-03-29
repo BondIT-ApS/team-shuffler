@@ -1,7 +1,9 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useDroppable } from "@dnd-kit/core";
 import NameBlock from "./NameBlock";
+import DraggableMember from "./DraggableMember";
 
 interface TeamContainerProps {
   teamName: string;
@@ -10,7 +12,8 @@ interface TeamContainerProps {
   index: number;
   lockedNames?: Set<string>;
   onToggleLock?: (name: string) => void;
-  showName?: boolean; // if false, show only "Team N"
+  showName?: boolean;
+  draggable?: boolean;
 }
 
 const containerVariants = {
@@ -26,6 +29,7 @@ export default function TeamContainer({
   lockedNames,
   onToggleLock,
   showName = true,
+  draggable = false,
 }: TeamContainerProps) {
   const isLight = isLightColor(color);
   const headerTextColor = isLight ? "#1A1A1A" : "#FFFFFF";
@@ -33,15 +37,18 @@ export default function TeamContainer({
 
   const displayLabel = showName ? teamName : `Team ${index + 1}`;
 
+  const { setNodeRef, isOver } = useDroppable({ id: `team-${index}` });
+
   return (
     <motion.div
       role="region"
       aria-label={`Team ${index + 1}${showName ? `: ${teamName}` : ""}`}
       className="flex flex-col overflow-hidden"
       style={{
-        border: "3px solid #1A1A1A",
+        border: isOver ? `3px solid ${color}` : "3px solid #1A1A1A",
         borderRadius: "4px",
-        boxShadow: "4px 4px 0px #1A1A1A",
+        boxShadow: isOver ? `0 0 0 3px ${color}55, 4px 4px 0px #1A1A1A` : "4px 4px 0px #1A1A1A",
+        transition: "border-color 0.15s, box-shadow 0.15s",
       }}
       initial={reducedMotion ? false : { opacity: 0, scale: 0.95 }}
       animate={reducedMotion ? {} : { opacity: 1, scale: 1 }}
@@ -74,11 +81,32 @@ export default function TeamContainer({
         </span>
       </div>
 
-      <div className="p-3 grid gap-2" style={{ backgroundColor: "#F5F5F5" }}>
+      <div
+        ref={draggable ? setNodeRef : undefined}
+        className="p-3 grid gap-2"
+        style={{
+          backgroundColor: isOver ? "#EFEFEF" : "#F5F5F5",
+          minHeight: "48px",
+          transition: "background-color 0.15s",
+        }}
+      >
         {members.length === 0 ? (
           <p className="text-xs text-center py-2" style={{ color: "#999" }}>
             No members
           </p>
+        ) : draggable ? (
+          members.map((name, memberIndex) => (
+            <DraggableMember
+              key={`${index}-${name}-${memberIndex}`}
+              id={`${index}:${memberIndex}:${name}`}
+              name={name}
+              color={color}
+              teamIndex={index}
+              memberIndex={memberIndex}
+              locked={lockedNames?.has(name)}
+              onToggleLock={onToggleLock ? () => onToggleLock(name) : undefined}
+            />
+          ))
         ) : (
           members.map((name) => (
             <NameBlock
