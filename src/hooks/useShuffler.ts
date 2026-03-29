@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { shuffle } from "@/lib/shuffle";
+import { trackEvent } from "@/lib/analytics";
 
 interface ValidationResult {
   nameList: string[];
@@ -64,6 +65,10 @@ export function useShuffler() {
     }
     const { teams } = shuffle(validation.nameList, teamCount, { lockedAssignments });
     setResult(teams);
+    trackEvent("shuffle", {
+      team_count: teamCount,
+      participant_count: validation.nameList.length,
+    });
   }
 
   function handleCopy() {
@@ -72,6 +77,7 @@ export function useShuffler() {
     navigator.clipboard.writeText(text);
     setCopyConfirmed(true);
     setTimeout(() => setCopyConfirmed(false), 2000);
+    trackEvent("copy_teams");
   }
 
   function handleReset() {
@@ -80,6 +86,7 @@ export function useShuffler() {
     setResult(null);
     setLockedNames(new Set());
     setCopyConfirmed(false);
+    trackEvent("reset");
   }
 
   return {
