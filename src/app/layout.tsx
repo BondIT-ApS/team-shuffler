@@ -49,6 +49,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           data-site-id={RYBBIT_SITE_ID}
           strategy="afterInteractive"
         />
+        <Script
+          id="matomo"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              var _paq = window._paq = window._paq || [];
+              _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+              _paq.push(["setCookieDomain", "*.team-shuffler.dev.bondit.dk"]);
+              _paq.push(["setDomains", ["*.team-shuffler.dev.bondit.dk","*.team-shuffler.bondit.dk"]]);
+              _paq.push(["enableCrossDomainLinking"]);
+              _paq.push(["setDoNotTrack", true]);
+              _paq.push(["trackPageView"]);
+              _paq.push(["enableLinkTracking"]);
+              (function() {
+                var u="//stats2.bonde.ninja/";
+                _paq.push(["setTrackerUrl", u+"matomo.php"]);
+                _paq.push(["setSiteId", "2"]);
+                var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0];
+                g.async=true; g.src=u+"matomo.js"; s.parentNode.insertBefore(g,s);
+              })();
+            `,
+          }}
+        />
         {GA_ID && (
           <>
             <Script
