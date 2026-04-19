@@ -5,7 +5,7 @@ WORKDIR /app
 # Install only production-critical native build tools, then clean up
 RUN apk add --no-cache libc6-compat
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 RUN npm ci --omit=dev --ignore-scripts && \
     # Remove npm cache to reduce layer size
     npm cache clean --force
@@ -15,7 +15,7 @@ FROM node:25-alpine AS builder
 WORKDIR /app
 
 # Need full deps (including devDeps) for the build
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 RUN npm ci --ignore-scripts
 
 COPY . .
